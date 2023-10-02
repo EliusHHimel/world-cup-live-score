@@ -16,7 +16,7 @@ const MatchList = () => {
   }, [currentDate]);
 
   // let singleMatch = matches.content[0];
-  console.log(matches[0]);
+  // console.log(matches[0]);
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   // console.log(tournamentLabel, matchLabel, matchID, venue, date, time);
   return (
@@ -32,7 +32,7 @@ const MatchList = () => {
     }>
       {
         matches.map(match => {
-          const { tournamentLabel, matchLabel, scheduleEntry, matchDate } = match;
+          const { tournamentLabel, matchLabel, scheduleEntry } = match;
           return (
             <div key={scheduleEntry.matchId.id} style={
 
@@ -46,7 +46,7 @@ const MatchList = () => {
             }>
               <h2>{tournamentLabel}</h2>
               <h3>{matchLabel}</h3>
-              <p>{matchDate.toLocaleDateString(undefined, options)}</p>
+              <p>{scheduleEntry.matchDate.slice(0, 10)}</p>
               <p>{scheduleEntry.venue.fullName}</p>
               <p>{scheduleEntry.matchId.id}</p>
               <p>{scheduleEntry.team1.team.fullName}</p>
