@@ -1,47 +1,61 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const MatchList = () => {
-    const [matches, setMatches] = useState([]);
-    const [matchScore, setMatchScore] = useState({});
-    const today = new Date();
-    const currentDate = JSON.stringify(today).slice(1, 11);
-    const reqHead = {
-        headers: {
-          accept: "*/*",
-          "accept-language": "en-US,en;q=0.9",
-          account: "ICC",
-          "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-          "sec-ch-ua":
-            '"Chromium";v="110", "Not A(Brand";v="24", "Google Chrome";v="110"',
-          "sec-ch-ua-mobile": "?0",
-          "sec-ch-ua-platform": '"Windows"',
-          "sec-fetch-dest": "empty",
-          "sec-fetch-mode": "cors",
-          "sec-fetch-site": "cross-site",
-        },
-        referrer: "https://www.icc-cricket.com/",
-        referrerPolicy: "strict-origin-when-cross-origin",
-        body: null,
-        method: "GET",
-        mode: "cors",
-        credentials: "omit",
+  const [matches, setMatches] = useState([]);
+  // const [matchScore, setMatchScore] = useState({});
+  const today = new Date();
+  const currentDate = JSON.stringify(today).slice(1, 11);
+
+  useEffect(() => {
+    fetch(`https://cricketapi-icc.pulselive.com/fixtures?startDate=${currentDate}&endDate=${currentDate}`)
+      .then(response => response.json())
+      .then(data => {
+        setMatches(data.content);
+        // console.log(data.content[1]);  
+      });
+  }, [currentDate]);
+
+  // let singleMatch = matches.content[0];
+  console.log(matches[0]);
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  // console.log(tournamentLabel, matchLabel, matchID, venue, date, time);
+  return (
+    <div style={
+      {
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '10px',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        alignContent: 'center',
       }
-        fetch(`https://cricketapi-icc.pulselive.com/fixtures?startDate=${currentDate}&endDate=${currentDate}`, reqHead)
-            .then(response => response.json())
-            .then(data => {
-                setMatches(data);
-                console.log(data);
-            });
-    
-     let singleMatch = matches.content[0];
-     console.log(singleMatch);
+    }>
+      {
+        matches.map(match => {
+          const { tournamentLabel, matchLabel, scheduleEntry, matchDate } = match;
+          return (
+            <div key={scheduleEntry.matchId.id} style={
 
-    // console.log(tournamentLabel, matchLabel, matchID, venue, date, time);
-    return (
-        <div>
-
-        </div>
-    );
+              {
+                background: "linear-gradient(90deg, #04064dd8 0%, #FE1448 100%)",
+                color: '#fff',
+                padding: '1rem',
+                borderRadius: '1rem',
+                width: '300px',
+              }
+            }>
+              <h2>{tournamentLabel}</h2>
+              <h3>{matchLabel}</h3>
+              <p>{matchDate.toLocaleDateString(undefined, options)}</p>
+              <p>{scheduleEntry.venue.fullName}</p>
+              <p>{scheduleEntry.matchId.id}</p>
+              <p>{scheduleEntry.team1.team.fullName}</p>
+            </div>
+          );
+        })
+      }
+    </div>
+  );
 };
 
 export default MatchList;
